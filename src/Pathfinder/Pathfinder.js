@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import Node from "./Node/Node";
-import "./Pathfinder.css";
-import "../algorithms/dijkstra";
-import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
 
+import "./Pathfinder.css";
+import GridMap from "./GridMap/GridMap";
+import "../algorithms/dijkstra";
+import Toolbar from "../NavigationItems/Toolbar/Toolbar";
+import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
+import ExecuteButton from "../UI/ExecuteButton/ExecuteButton";
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
@@ -22,22 +24,30 @@ export default class Pathfinder extends Component {
     const grid = getInitialGrid();
     this.setState({ grid });
   }
-  handleMouseDown(row, col) {
-    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-    this.setState({ grid: newGrid, mouseIsPressed: true });
-  }
 
-  handleMouseEnter(row, col) {
-    if (!this.state.mouseIsPressed) return;
-    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+  //Mouse Event Handlers
+  handleMouseDown = (row, col, grid) => {
+    const newGrid = getNewGridWithWallToggled(grid, row, col);
+    // console.log(`down === ${this.state.mouseIsPressed}`);
+    this.setState({
+      grid: newGrid,
+      mouseIsPressed: true
+    });
+    // console.log(`down after === ${this.state.mouseIsPressed}`);
+  };
+
+  handleMouseEnter = (row, col, pressed, grid) => {
+    if (!pressed) return;
+    const newGrid = getNewGridWithWallToggled(grid, row, col);
     this.setState({ grid: newGrid });
-  }
+  };
 
-  handleMouseUp() {
+  handleMouseUp = () => {
     this.setState({ mouseIsPressed: false });
-  }
+  };
 
-  animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
+  //Animation
+  animateAlgo(visitedNodesInOrder, nodesInShortestPathOrder) {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
@@ -62,54 +72,35 @@ export default class Pathfinder extends Component {
     }
   }
 
-  visualizeDijkstra() {
+  visualize = () => {
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
     const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-  }
+    this.animateAlgo(visitedNodesInOrder, nodesInShortestPathOrder);
+  };
 
   render() {
     const { grid, mouseIsPressed } = this.state;
 
     return (
       <div>
-        <button onClick={() => this.visualizeDijkstra()}>
-          Visualize Dijkstra's Algorithm
-        </button>
-        <div className="grid">
-          {grid.map((row, rowIdx) => {
-            return (
-              <div key={rowIdx}>
-                {row.map((node, nodeIdx) => {
-                  const { row, col, isFinish, isStart, isWall } = node;
-                  return (
-                    <Node
-                      key={nodeIdx}
-                      col={col}
-                      isFinish={isFinish}
-                      isStart={isStart}
-                      row={row}
-                      isWall={isWall}
-                      mouseIsPressed={mouseIsPressed}
-                      onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-                      onMouseEnter={(row, col) =>
-                        this.handleMouseEnter(row, col)
-                      }
-                      onMouseUp={() => this.handleMouseUp()}
-                    ></Node>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
+        <Toolbar />
+        <ExecuteButton onClick={this.visualize} text="Visualize Algorithm" />
+        <GridMap
+          grid={grid}
+          mouseIsPressed={mouseIsPressed}
+          onMouseDown={this.handleMouseDown}
+          onMouseEnter={this.handleMouseEnter}
+          onMouseUp={this.handleMouseUp}
+        />
       </div>
     );
   }
 }
+
+//Helpers
 const getInitialGrid = () => {
   const grid = [];
   for (let row = 0; row < 20; row++) {
