@@ -3,9 +3,9 @@ import React, { Component } from "react";
 import "./Pathfinder.css";
 import GridMap from "./GridMap/GridMap";
 import "../algorithms/dijkstra";
-import Toolbar from "../NavigationItems/Toolbar/Toolbar";
 import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
 import ExecuteButton from "../UI/ExecuteButton/ExecuteButton";
+import TopBar from "../TopBar/TopBar";
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
@@ -85,8 +85,8 @@ export default class Pathfinder extends Component {
     const { grid, mouseIsPressed } = this.state;
 
     return (
-      <div>
-        <Toolbar />
+      <main>
+        <TopBar />
         <ExecuteButton onClick={this.visualize} text="Visualize Algorithm" />
         <GridMap
           grid={grid}
@@ -95,7 +95,7 @@ export default class Pathfinder extends Component {
           onMouseEnter={this.handleMouseEnter}
           onMouseUp={this.handleMouseUp}
         />
-      </div>
+      </main>
     );
   }
 }

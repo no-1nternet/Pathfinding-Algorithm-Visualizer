@@ -1,9 +1,9 @@
 import React from "react";
 import Node from "../Node/Node";
-
+import classes from "./GridMap.module.css";
 const gridMap = props => {
   return (
-    <div className="grid">
+    <div className={classes.gridMap}>
       {props.grid.map((row, rowIdx) => {
         return (
           <div key={rowIdx}>
