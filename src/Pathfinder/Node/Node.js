@@ -21,7 +21,7 @@ export default class Node extends Component {
       : isWall
       ? "node-wall"
       : "";
-
+    // console.log(`node ${extraClassName}`);
     return (
       <div
         id={`node-${row}-${col}`}

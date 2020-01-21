@@ -25,6 +25,24 @@ export default class Pathfinder extends Component {
     this.setState({ grid });
   }
 
+  resetGird = () => {
+    for (let row = 0; row < 20; row++) {
+      for (let col = 0; col < 50; col++) {
+        if (row === START_NODE_ROW && col === START_NODE_COL) {
+          document.getElementById(`node-${row}-${col}`).className =
+            "node node-start";
+        } else if (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) {
+          document.getElementById(`node-${row}-${col}`).className =
+            "node node-finish";
+        } else {
+          document.getElementById(`node-${row}-${col}`).className = "node";
+        }
+      }
+    }
+    const grid = getInitialGrid();
+    this.setState({ grid });
+  };
+
   //Mouse Event Handlers
   handleMouseDown = (row, col, grid) => {
     const newGrid = getNewGridWithWallToggled(grid, row, col);
@@ -88,6 +106,7 @@ export default class Pathfinder extends Component {
       <main>
         <TopBar />
         <ExecuteButton onClick={this.visualize} text="Visualize Algorithm" />
+        <button onClick={this.resetGird}>reset</button>
         <GridMap
           grid={grid}
           mouseIsPressed={mouseIsPressed}
