@@ -10,6 +10,7 @@
   transition: all 0.4s;
   cursor: pointer;
   margin: auto;
+  grid-column: 2/4;
 }
 .executeButton span {
   cursor: pointer;

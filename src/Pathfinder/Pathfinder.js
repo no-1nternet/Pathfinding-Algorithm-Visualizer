@@ -6,7 +6,9 @@ import "../algorithms/dijkstra";
 import { dijkstra, reconstructPathDijkstra } from "../algorithms/dijkstra";
 import { astar, reconstructPathAstar } from "../algorithms/astar";
 import ExecuteButton from "../UI/ExecuteButton/ExecuteButton";
+import Button from "../UI/Button/Button";
 import TopBar from "../TopBar/TopBar";
+import Control from "./Control/Control";
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
@@ -106,8 +108,11 @@ export default class Pathfinder extends Component {
     return (
       <main>
         <TopBar />
-        <ExecuteButton onClick={this.visualize} text="Visualize Algorithm" />
-        <button onClick={this.resetGird}>reset</button>
+        <Control>
+          <ExecuteButton onClick={this.visualize} text="Visualize Algorithm" />
+          <Button onClick={this.resetGird} text="Clear Map" />
+        </Control>
+
         <GridMap
           grid={grid}
           mouseIsPressed={mouseIsPressed}
