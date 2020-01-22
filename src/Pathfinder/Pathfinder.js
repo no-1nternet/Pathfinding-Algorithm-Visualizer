@@ -3,7 +3,8 @@ import React, { Component } from "react";
 import "./Pathfinder.css";
 import GridMap from "./GridMap/GridMap";
 import "../algorithms/dijkstra";
-import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
+import { dijkstra, reconstructPathDijkstra } from "../algorithms/dijkstra";
+import { astar, reconstructPathAstar } from "../algorithms/astar";
 import ExecuteButton from "../UI/ExecuteButton/ExecuteButton";
 import TopBar from "../TopBar/TopBar";
 const START_NODE_ROW = 10;
@@ -94,8 +95,8 @@ export default class Pathfinder extends Component {
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-    const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-    const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+    const visitedNodesInOrder = astar(grid, startNode, finishNode);
+    const nodesInShortestPathOrder = reconstructPathAstar(finishNode);
     this.animateAlgo(visitedNodesInOrder, nodesInShortestPathOrder);
   };
 
