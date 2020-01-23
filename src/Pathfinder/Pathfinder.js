@@ -9,6 +9,7 @@ import ExecuteButton from "../UI/ExecuteButton/ExecuteButton";
 import Button from "../UI/Button/Button";
 import TopBar from "../TopBar/TopBar";
 import Control from "./Control/Control";
+import AlgorithmSwitch from "./AlgorithmSwitch/AlgorithmSwitch";
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
@@ -19,7 +20,8 @@ export default class Pathfinder extends Component {
     super(props);
     this.state = {
       grid: [],
-      mouseIsPressed: false
+      mouseIsPressed: false,
+      algorithm: "Dijkstra"
     };
   }
 
@@ -67,6 +69,13 @@ export default class Pathfinder extends Component {
     this.setState({ mouseIsPressed: false });
   };
 
+  switchAlgorithm = () => {
+    if (this.state.algorithm === "A Star")
+      this.setState({ algorithm: "Dijkstra" });
+    if (this.state.algorithm === "Dijkstra")
+      this.setState({ algorithm: "A Star" });
+  };
+
   //Animation
   animateAlgo(visitedNodesInOrder, nodesInShortestPathOrder) {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
@@ -97,18 +106,30 @@ export default class Pathfinder extends Component {
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-    const visitedNodesInOrder = astar(grid, startNode, finishNode);
-    const nodesInShortestPathOrder = reconstructPathAstar(finishNode);
+    let visitedNodesInOrder;
+    let nodesInShortestPathOrder;
+    if (this.state.algorithm === "A Star") {
+      visitedNodesInOrder = astar(grid, startNode, finishNode);
+      nodesInShortestPathOrder = reconstructPathAstar(finishNode);
+    } else if (this.state.algorithm === "Dijkstra") {
+      visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+      nodesInShortestPathOrder = reconstructPathDijkstra(finishNode);
+    }
+
     this.animateAlgo(visitedNodesInOrder, nodesInShortestPathOrder);
   };
 
   render() {
-    const { grid, mouseIsPressed } = this.state;
+    const { grid, mouseIsPressed, algorithm } = this.state;
 
     return (
       <main>
         <TopBar />
         <Control>
+          <AlgorithmSwitch
+            switch={this.switchAlgorithm}
+            algorithm={algorithm}
+          />
           <ExecuteButton onClick={this.visualize} text="Visualize Algorithm" />
           <Button onClick={this.resetGird} text="Clear Map" />
         </Control>
