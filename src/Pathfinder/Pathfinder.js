@@ -141,6 +141,7 @@ export default class Pathfinder extends Component {
           onMouseEnter={this.handleMouseEnter}
           onMouseUp={this.handleMouseUp}
         />
+        <p>*Click on the map to add walls.*</p>
       </main>
     );
   }
