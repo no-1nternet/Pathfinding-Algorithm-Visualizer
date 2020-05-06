@@ -6,7 +6,7 @@ const gridMap = props => {
     <div className={classes.gridMap}>
       {props.grid.map((row, rowIdx) => {
         return (
-          <div key={rowIdx}>
+          <div key={rowIdx} className={classes.nodeRow}>
             {row.map((node, nodeIdx) => {
               const { row, col, isFinish, isStart, isWall } = node;
               return (

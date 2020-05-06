@@ -5,11 +5,7 @@ import GridMap from "./GridMap/GridMap";
 import "../algorithms/dijkstra";
 import { dijkstra, reconstructPathDijkstra } from "../algorithms/dijkstra";
 import { astar, reconstructPathAstar } from "../algorithms/astar";
-import ExecuteButton from "../UI/ExecuteButton/ExecuteButton";
-import Button from "../UI/Button/Button";
-import TopBar from "../TopBar/TopBar";
-import Control from "./Control/Control";
-import AlgorithmSwitch from "./AlgorithmSwitch/AlgorithmSwitch";
+import NavBar from "../NavBar/NavBar";
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
@@ -102,16 +98,16 @@ export default class Pathfinder extends Component {
     }
   }
 
-  visualize = () => {
+  visualize = (algo) => {
     const { grid } = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
     let visitedNodesInOrder;
     let nodesInShortestPathOrder;
-    if (this.state.algorithm === "A Star") {
+    if (algo === "astar") {
       visitedNodesInOrder = astar(grid, startNode, finishNode);
       nodesInShortestPathOrder = reconstructPathAstar(finishNode);
-    } else if (this.state.algorithm === "Dijkstra") {
+    } else if (algo === "dijkstra") {
       visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
       nodesInShortestPathOrder = reconstructPathDijkstra(finishNode);
     }
@@ -120,19 +116,15 @@ export default class Pathfinder extends Component {
   };
 
   render() {
-    const { grid, mouseIsPressed, algorithm } = this.state;
+    const { grid, mouseIsPressed } = this.state;
 
     return (
       <main>
-        <TopBar />
-        <Control>
-          <AlgorithmSwitch
-            switch={this.switchAlgorithm}
-            algorithm={algorithm}
-          />
-          <ExecuteButton onClick={this.visualize} text="Visualize Algorithm" />
-          <Button onClick={this.resetGird} text="Clear Map" />
-        </Control>
+        <NavBar
+          exe={this.visualize}
+          switch={this.switchAlgorithm}
+          clear={this.resetGird}
+        />
 
         <GridMap
           grid={grid}

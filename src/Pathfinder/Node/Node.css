@@ -46,17 +46,17 @@
 }
 
 .node-wall {
-  /* animation-name: wall;
+  animation-name: wall;
   animation-duration: 0.5s;
   animation-timing-function: ease-out;
   animation-delay: 0;
   animation-direction: alternate;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  animation-play-state: running; */
-  background-color: black;
+  animation-play-state: running;
+  background-color: whitesmoke;
 }
-/* 
+
 @keyframes wall {
   0% {
     transform: scale(0.6);
@@ -65,7 +65,7 @@
   100% {
     transform: scale(1);
   }
-} */
+}
 
 .node-shortest-path {
   animation-name: shortestPath;

@@ -1,5 +1,9 @@
 .gridMap {
-  margin: 0px;
-  display: inline;
-  padding: 0mm;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+
+.nodeRow{
+  height: 25px;
 }
