@@ -19,7 +19,9 @@ const NavBar = props => {
                 </nav>
                 <div>
                     <button onClick={() => { props.clear() }}>Clear</button>
-                    <button onClick={() => { props.exe(algoName) }}>Execute</button>
+                    <button
+                        disabled={algoName === 'none'}
+                        onClick={() => { props.exe(algoName) }}>Execute</button>
                 </div>
             </div>
 

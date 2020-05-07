@@ -17,7 +17,6 @@ export default class Pathfinder extends Component {
     this.state = {
       grid: [],
       mouseIsPressed: false,
-      algorithm: "Dijkstra"
     };
   }
 
@@ -65,12 +64,6 @@ export default class Pathfinder extends Component {
     this.setState({ mouseIsPressed: false });
   };
 
-  switchAlgorithm = () => {
-    if (this.state.algorithm === "A Star")
-      this.setState({ algorithm: "Dijkstra" });
-    if (this.state.algorithm === "Dijkstra")
-      this.setState({ algorithm: "A Star" });
-  };
 
   //Animation
   animateAlgo(visitedNodesInOrder, nodesInShortestPathOrder) {
@@ -122,7 +115,6 @@ export default class Pathfinder extends Component {
       <main>
         <NavBar
           exe={this.visualize}
-          switch={this.switchAlgorithm}
           clear={this.resetGird}
         />
 

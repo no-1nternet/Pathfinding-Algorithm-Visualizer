@@ -11,6 +11,11 @@ h1,li,div,button{
     color: aqua;
     text-decoration: none;
 }
+
+button:disabled{
+    background-color: rgba(0,136,100,0.8);
+}
+
 h1{
     font-size: 24px;
 }
@@ -44,7 +49,7 @@ button{
     cursor: pointer;
 
 }
-button :hover{
+button:hover{
     background-color: rgba(0,136,100,0.8);
 }
 
