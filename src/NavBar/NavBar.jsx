@@ -10,8 +10,8 @@ const NavBar = props => {
                 <nav>
                     <ul className="nav__links">
                         <li><div
-                            className={`${algoName === "astar" ? "active" : ""}`}
-                            onClick={() => { setAlgoName("astar") }}>A star</div></li>
+                            className={`${algoName === "A star" ? "active" : ""}`}
+                            onClick={() => { setAlgoName("A star") }}>A star</div></li>
                         <li><div
                             className={`${algoName === "dijkstra" ? "active" : ""}`}
                             onClick={() => { setAlgoName("dijkstra") }}>Dijkstra</div></li>
@@ -20,8 +20,10 @@ const NavBar = props => {
                 <div>
                     <button onClick={() => { props.clear() }}>Clear</button>
                     <button
-                        disabled={algoName === 'none'}
-                        onClick={() => { props.exe(algoName) }}>Execute</button>
+                        disabled={algoName === "none"}
+                        onClick={() => { props.exe(algoName) }}>
+                        {algoName === "none" ? "Please select algorithon" : `Go ${algoName}!`}
+                    </button>
                 </div>
             </div>
 

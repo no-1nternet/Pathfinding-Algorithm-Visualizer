@@ -11,7 +11,7 @@ export default class Pathfinder extends Component {
     super(props);
     const h = this.props.windowSize.height;
     const w = this.props.windowSize.width;
-    const nRows = Math.floor((h - 80) / 25);
+    const nRows = Math.floor((h - 140) / 25);
     const nCols = Math.floor((w - 200) / 25);
     this.state = {
       rows: nRows,
@@ -134,7 +134,7 @@ export default class Pathfinder extends Component {
     const finishNode = grid[this.state.finishNode.row][this.state.finishNode.col];
     let visitedNodesInOrder;
     let nodesInShortestPathOrder;
-    if (algo === "astar") {
+    if (algo === "A star") {
       visitedNodesInOrder = astar(grid, startNode, finishNode);
       nodesInShortestPathOrder = reconstructPathAstar(finishNode);
     } else if (algo === "dijkstra") {

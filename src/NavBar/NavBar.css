@@ -2,7 +2,7 @@
 
 .wrapper{
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr ;
+    grid-template-columns: 2fr 3fr 2fr ;
     background-color: rgb(27, 27, 27);
     align-items: center;
     height:80px

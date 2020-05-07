@@ -21,19 +21,18 @@ export const astar = (grid, startNode, finishNode) => {
   let fScore = infinityScoreGrid(grid);
   fScore[startNode.row][startNode.col] = hCost(startNode, finishNode);
 
-  while (!!visitedNodes.length) {
+  while (visitedNodes.length !== 0) {
     const currentNode = findCurrentNode(visitedNodes, fScore);
     if (currentNode === finishNode) {
       return visitedNodesInOrder;
     }
     visitedNodes.splice(visitedNodes.indexOf(currentNode), 1);
     const neighbor = getUnvisitedNeighbors(currentNode, grid);
-    // console.log(neighbor);
     for (const n of neighbor) {
       if (n.type === "node-wall") continue;
       // tentative_gScore is the distance from start to the neighbor through current
       const tentative_gScore =
-        gScore[currentNode.row][currentNode.col] + hCost(currentNode, n);
+        gScore[currentNode.row][currentNode.col] + 1;
       if (tentative_gScore < gScore[n.row][n.col]) {
         // This path to neighbor is better than any previous one. Record it!
         cameFrom[n.row][n.col] = currentNode;
@@ -59,7 +58,8 @@ const hCost = (currentNode, finishNode) => {
 
 const findCurrentNode = (visitedNodes, fScore) => {
   let currentNode;
-  let shortest = 999;
+
+  let shortest = 9999;
   for (const node of visitedNodes) {
     if (fScore[node.row][node.col] < shortest) {
       shortest = fScore[node.row][node.col];
@@ -76,7 +76,7 @@ function getUnvisitedNeighbors(node, grid) {
   if (row < grid.length - 1) neighbors.push(grid[row + 1][col]);
   if (col > 0) neighbors.push(grid[row][col - 1]);
   if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]);
-  return neighbors.filter(neighbor => !neighbor.isVisited);
+  return neighbors;
 }
 
 const infinityScoreGrid = grid => {
@@ -84,7 +84,7 @@ const infinityScoreGrid = grid => {
   for (const row of grid) {
     const scoreRow = [];
     for (let i = 0; i < row.length; i++) {
-      scoreRow.push("999");
+      scoreRow.push("9999");
     }
     scores.push(scoreRow);
   }
