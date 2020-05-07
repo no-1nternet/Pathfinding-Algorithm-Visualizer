@@ -1,20 +1,29 @@
 import React, { Component } from "react";
-import windowSize from 'react-window-size';
 import "./Pathfinder.css";
 import GridMap from "./GridMap/GridMap";
 import "../algorithms/dijkstra";
 import { dijkstra, reconstructPathDijkstra } from "../algorithms/dijkstra";
 import { astar, reconstructPathAstar } from "../algorithms/astar";
 import NavBar from "../NavBar/NavBar";
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
 
 export default class Pathfinder extends Component {
   constructor(props) {
     super(props);
+    const h = this.props.windowSize.height;
+    const w = this.props.windowSize.width;
+    const nRows = Math.floor((h - 80) / 25);
+    const nCols = Math.floor((w - 200) / 25);
     this.state = {
+      rows: nRows,
+      cols: nCols,
+      startNode: {
+        row: Math.floor(nRows / 2),
+        col: Math.floor(nCols / 4),
+      },
+      finishNode: {
+        row: Math.floor(nRows / 2),
+        col: Math.floor(nCols / 4) * 3,
+      },
       grid: [],
       mouseIsPressed: false,
       count: 0
@@ -22,18 +31,18 @@ export default class Pathfinder extends Component {
   }
 
   componentDidMount() {
-    const grid = getInitialGrid();
+
+    const grid = getInitialGrid(this.state.rows, this.state.cols);
     this.setState({ grid });
   }
 
   resetGird = () => {
-    console.log(this.props.windowWidth);
-    for (let row = 0; row < 20; row++) {
-      for (let col = 0; col < 50; col++) {
-        if (row === START_NODE_ROW && col === START_NODE_COL) {
+    for (let row = 0; row < this.state.rows; row++) {
+      for (let col = 0; col < this.state.cols; col++) {
+        if (row === this.state.startNode.row && col === this.state.startNode.col) {
           document.getElementById(`node-${row}-${col}`).className =
             "node node-start";
-        } else if (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) {
+        } else if (row === this.state.finishNode.row && col === this.state.finishNode.col) {
           document.getElementById(`node-${row}-${col}`).className =
             "node node-finish";
         } else {
@@ -41,7 +50,7 @@ export default class Pathfinder extends Component {
         }
       }
     }
-    const grid = getInitialGrid();
+    const grid = getInitialGrid(this.state.rows, this.state.cols);
     this.setState({ grid });
   };
 
@@ -121,8 +130,8 @@ export default class Pathfinder extends Component {
 
   visualize = (algo) => {
     const { grid } = this.state;
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    const startNode = grid[this.state.startNode.row][this.state.startNode.col];
+    const finishNode = grid[this.state.finishNode.row][this.state.finishNode.col];
     let visitedNodesInOrder;
     let nodesInShortestPathOrder;
     if (algo === "astar") {
@@ -163,21 +172,21 @@ export default class Pathfinder extends Component {
 }
 
 //Helpers
-const getInitialGrid = () => {
+const getInitialGrid = (nRow, nCol) => {
   const grid = [];
-  for (let row = 0; row < 20; row++) {
+  for (let row = 0; row < nRow; row++) {
     const currentRow = [];
-    for (let col = 0; col < 50; col++) {
-      currentRow.push(createNode(col, row));
+    for (let col = 0; col < nCol; col++) {
+      currentRow.push(createNode(col, row, nRow, nCol));
     }
     grid.push(currentRow);
   }
   return grid;
 };
 
-const createNode = (col, row) => {
-  const nodeType = (row === START_NODE_ROW && col === START_NODE_COL) ? "node-start" :
-    (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) ? "node-finish" : "";
+const createNode = (col, row, nRow, nCol) => {
+  const nodeType = (row === Math.floor(nRow / 2) && col === Math.floor(nCol / 4)) ? "node-start" :
+    (row === Math.floor(nRow / 2) && col === Math.floor(nCol / 4) * 3) ? "node-finish" : "";
   return {
     col,
     row,
@@ -189,20 +198,20 @@ const createNode = (col, row) => {
   };
 };
 
-const getNewGridWithWallToggled = (grid, row, col) => {
-  const newGrid = grid.slice();
-  const node = newGrid[row][col];
-  if (node.toggled) return newGrid;
-  const newNode = {
-    ...node,
-    type: node.type === "node-wall" ? "" :
-      !(node.type === "node-start" || node.type === "node-finish") ? "node-wall" :
-        node.type,
-    toggled: true
-  };
-  newGrid[row][col] = newNode;
-  return newGrid;
-};
+// const getNewGridWithWallToggled = (grid, row, col) => {
+//   const newGrid = grid.slice();
+//   const node = newGrid[row][col];
+//   if (node.toggled) return newGrid;
+//   const newNode = {
+//     ...node,
+//     type: node.type === "node-wall" ? "" :
+//       !(node.type === "node-start" || node.type === "node-finish") ? "node-wall" :
+//         node.type,
+//     toggled: true
+//   };
+//   newGrid[row][col] = newNode;
+//   return newGrid;
+// };
 
 const setWall = (grid, row, col) => {
   const newGrid = grid.slice();

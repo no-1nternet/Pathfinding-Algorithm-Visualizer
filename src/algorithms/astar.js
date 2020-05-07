@@ -60,8 +60,6 @@ const hCost = (currentNode, finishNode) => {
 const findCurrentNode = (visitedNodes, fScore) => {
   let currentNode;
   let shortest = 999;
-  //   console.log(fScore.indexOf(Math.min(...fScore)));
-  //   visitedNodes[row][col];
   for (const node of visitedNodes) {
     if (fScore[node.row][node.col] < shortest) {
       shortest = fScore[node.row][node.col];
@@ -72,7 +70,6 @@ const findCurrentNode = (visitedNodes, fScore) => {
 };
 
 function getUnvisitedNeighbors(node, grid) {
-  //   console.log(node);
   const neighbors = [];
   const { col, row } = node;
   if (row > 0) neighbors.push(grid[row - 1][col]);
