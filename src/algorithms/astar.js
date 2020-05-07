@@ -30,7 +30,7 @@ export const astar = (grid, startNode, finishNode) => {
     const neighbor = getUnvisitedNeighbors(currentNode, grid);
     // console.log(neighbor);
     for (const n of neighbor) {
-      if (n.isWall) continue;
+      if (n.type === "node-wall") continue;
       // tentative_gScore is the distance from start to the neighbor through current
       const tentative_gScore =
         gScore[currentNode.row][currentNode.col] + hCost(currentNode, n);
@@ -53,7 +53,7 @@ export const astar = (grid, startNode, finishNode) => {
 const hCost = (currentNode, finishNode) => {
   return Math.sqrt(
     Math.pow(currentNode.row - finishNode.row, 2) +
-      Math.pow(currentNode.col - finishNode.col, 2)
+    Math.pow(currentNode.col - finishNode.col, 2)
   );
 };
 

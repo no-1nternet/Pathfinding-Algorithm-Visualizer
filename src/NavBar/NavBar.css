@@ -3,6 +3,8 @@
 .wrapper{
     display: grid;
     grid-template-columns: 1fr 2fr 1fr ;
+    background-color: rgb(27, 27, 27);
+    align-items: center;
 }
 h1,li,div,button{
     font-family: "Montserrat", sans-serif;

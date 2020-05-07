@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import windowSize from 'react-window-size';
 import "./Pathfinder.css";
 import GridMap from "./GridMap/GridMap";
 import "../algorithms/dijkstra";
@@ -17,6 +17,7 @@ export default class Pathfinder extends Component {
     this.state = {
       grid: [],
       mouseIsPressed: false,
+      count: 0
     };
   }
 
@@ -26,6 +27,7 @@ export default class Pathfinder extends Component {
   }
 
   resetGird = () => {
+    console.log(this.props.windowWidth);
     for (let row = 0; row < 20; row++) {
       for (let col = 0; col < 50; col++) {
         if (row === START_NODE_ROW && col === START_NODE_COL) {
@@ -44,24 +46,50 @@ export default class Pathfinder extends Component {
   };
 
   //Mouse Event Handlers
-  handleMouseDown = (row, col, grid) => {
-    const newGrid = getNewGridWithWallToggled(grid, row, col);
-    // console.log(`down === ${this.state.mouseIsPressed}`);
+  //Map
+  handleMapMouseDown = () => {
     this.setState({
-      grid: newGrid,
       mouseIsPressed: true
     });
-    // console.log(`down after === ${this.state.mouseIsPressed}`);
-  };
+  }
 
-  handleMouseEnter = (row, col, pressed, grid) => {
-    if (!pressed) return;
-    const newGrid = getNewGridWithWallToggled(grid, row, col);
-    this.setState({ grid: newGrid });
-  };
+  handleMapMouseUp = () => {
+    this.setState({
+      mouseIsPressed: false
+    });
+  }
 
-  handleMouseUp = () => {
-    this.setState({ mouseIsPressed: false });
+  //Node
+  handleNodeMouseDown = (row, col) => {
+    // const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+    // this.setState({
+    //   grid: newGrid,
+    // });
+    setWall(this.state.grid, row, col);
+  };
+  handleNodeMouseEnter = (row, col) => {
+    if (!this.state.mouseIsPressed) return;
+    // console.log("on!Enter");
+    // const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+    // this.setState({ grid: newGrid });
+    setWall(this.state.grid, row, col);
+    var c = this.state.count + 1;
+    this.setState({ count: c })
+  };
+  handleNodeMouseLeave = (row, col) => {
+    if (!this.state.mouseIsPressed) return;
+    // console.log("on!Leave");
+    // const newGrid = UntoggledNode(this.state.grid, row, col);
+    // this.setState({ grid: newGrid });
+    UntoggledNode(this.state.grid, row, col);
+    var c = this.state.count + 1;
+    this.setState({ count: c })
+  };
+  handleNodeMouseUp = (row, col) => {
+    // const newGrid = UntoggledNode(this.state.grid, row, col);
+    // this.setState({ grid: newGrid });
+    // console.log("off!");
+    UntoggledNode(this.state.grid, row, col);
   };
 
 
@@ -121,9 +149,12 @@ export default class Pathfinder extends Component {
         <GridMap
           grid={grid}
           mouseIsPressed={mouseIsPressed}
-          onMouseDown={this.handleMouseDown}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseUp={this.handleMouseUp}
+          mapMouseDown={this.handleMapMouseDown}
+          mapMouseUp={this.handleMapMouseUp}
+          nodeMouseDown={this.handleNodeMouseDown}
+          nodeMouseEnter={this.handleNodeMouseEnter}
+          nodeMouseUp={this.handleNodeMouseUp}
+          nodeMouseLeave={this.handleNodeMouseLeave}
         />
         <p>*Click on the map to add walls.*</p>
       </main>
@@ -145,13 +176,14 @@ const getInitialGrid = () => {
 };
 
 const createNode = (col, row) => {
+  const nodeType = (row === START_NODE_ROW && col === START_NODE_COL) ? "node-start" :
+    (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) ? "node-finish" : "";
   return {
     col,
     row,
-    isStart: row === START_NODE_ROW && col === START_NODE_COL,
-    isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+    type: nodeType,
     distance: Infinity,
-    isVisited: false,
+    toggled: false,
     isWall: false,
     previousNode: null
   };
@@ -160,10 +192,34 @@ const createNode = (col, row) => {
 const getNewGridWithWallToggled = (grid, row, col) => {
   const newGrid = grid.slice();
   const node = newGrid[row][col];
+  if (node.toggled) return newGrid;
   const newNode = {
     ...node,
-    isWall: !node.isWall
+    type: node.type === "node-wall" ? "" :
+      !(node.type === "node-start" || node.type === "node-finish") ? "node-wall" :
+        node.type,
+    toggled: true
   };
   newGrid[row][col] = newNode;
   return newGrid;
+};
+
+const setWall = (grid, row, col) => {
+  const newGrid = grid.slice();
+  const node = newGrid[row][col];
+  if (node.toggled) return;
+  const nodeType = node.type + "";
+  if (nodeType === "node-wall") {
+    node.type = "";
+  } else if (!(node.type === "node-start" || node.type === "node-finish")) {
+    node.type = "node-wall";
+    node.key++;
+    node.toggled = true;
+  };
+}
+
+const UntoggledNode = (grid, row, col) => {
+  const newGrid = grid.slice();
+  const node = newGrid[row][col];
+  node.toggled = false;
 };
