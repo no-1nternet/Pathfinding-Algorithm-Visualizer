@@ -26,7 +26,7 @@ export default class Pathfinder extends Component {
       },
       grid: [],
       mouseIsPressed: false,
-      count: 0
+      animating: false
     };
   }
 
@@ -54,6 +54,25 @@ export default class Pathfinder extends Component {
     this.setState({ grid });
   };
 
+  resetGirdButWall = (ifClearWall) => {
+    const grid = this.state.grid;
+    for (let nodesRow of grid) {
+      for (let node of nodesRow) {
+        if (node.type === "node-visited" || node.type === "node-shortest-path") {
+          node.type = "";
+        }
+        if (node.row === this.state.startNode.row && node.col === this.state.startNode.col) {
+          node.type = "node-start";
+        } else if (node.row === this.state.finishNode.row && node.col === this.state.finishNode.col) {
+          node.type = "node-finish";
+        } else if (node.type === "node-wall" && ifClearWall) {
+          node.type = "";
+        }
+      }
+    }
+    this.setState({ grid });
+  };
+
   //Mouse Event Handlers
   //Map
   handleMapMouseDown = () => {
@@ -70,34 +89,19 @@ export default class Pathfinder extends Component {
 
   //Node
   handleNodeMouseDown = (row, col) => {
-    // const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-    // this.setState({
-    //   grid: newGrid,
-    // });
     setWall(this.state.grid, row, col);
   };
   handleNodeMouseEnter = (row, col) => {
     if (!this.state.mouseIsPressed) return;
-    // console.log("on!Enter");
-    // const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-    // this.setState({ grid: newGrid });
     setWall(this.state.grid, row, col);
-    var c = this.state.count + 1;
-    this.setState({ count: c })
+    this.forceUpdate();
   };
   handleNodeMouseLeave = (row, col) => {
     if (!this.state.mouseIsPressed) return;
-    // console.log("on!Leave");
-    // const newGrid = UntoggledNode(this.state.grid, row, col);
-    // this.setState({ grid: newGrid });
     UntoggledNode(this.state.grid, row, col);
-    var c = this.state.count + 1;
-    this.setState({ count: c })
+    this.forceUpdate();
   };
   handleNodeMouseUp = (row, col) => {
-    // const newGrid = UntoggledNode(this.state.grid, row, col);
-    // this.setState({ grid: newGrid });
-    // console.log("off!");
     UntoggledNode(this.state.grid, row, col);
   };
 
@@ -113,6 +117,7 @@ export default class Pathfinder extends Component {
       }
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
+        node.type = "node-visited";
         document.getElementById(`node-${node.row}-${node.col}`).className =
           "node node-visited";
       }, 10 * i);
@@ -122,25 +127,32 @@ export default class Pathfinder extends Component {
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
+        node.type = "node-shortest-path";
         document.getElementById(`node-${node.row}-${node.col}`).className =
           "node node-shortest-path";
-      }, 20 * i);
+      }, 10 * i);
     }
+    setTimeout(() => {
+      this.setState({ animating: false });
+    }, 10 * nodesInShortestPathOrder.length);
   }
 
   visualize = (algo) => {
-    const { grid } = this.state;
-    const startNode = grid[this.state.startNode.row][this.state.startNode.col];
-    const finishNode = grid[this.state.finishNode.row][this.state.finishNode.col];
+    this.resetGirdButWall();
+    this.setState({ animating: true });
+    const startNode = this.state.grid[this.state.startNode.row][this.state.startNode.col];
+    const finishNode = this.state.grid[this.state.finishNode.row][this.state.finishNode.col];
     let visitedNodesInOrder;
     let nodesInShortestPathOrder;
-    if (algo === "A star") {
-      visitedNodesInOrder = astar(grid, startNode, finishNode);
-      nodesInShortestPathOrder = reconstructPathAstar(finishNode);
-    } else if (algo === "dijkstra") {
-      visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+    if (algo === "dijkstra") {
+      visitedNodesInOrder = dijkstra(this.state.grid, startNode, finishNode);
       nodesInShortestPathOrder = reconstructPathDijkstra(finishNode);
     }
+    if (algo === "astar") {
+      visitedNodesInOrder = astar(this.state.grid, startNode, finishNode);
+      nodesInShortestPathOrder = reconstructPathAstar(finishNode);
+    }
+
 
     this.animateAlgo(visitedNodesInOrder, nodesInShortestPathOrder);
   };
@@ -152,7 +164,9 @@ export default class Pathfinder extends Component {
       <main>
         <NavBar
           exe={this.visualize}
-          clear={this.resetGird}
+          clear={this.resetGirdButWall}
+          clearWalls={this.resetGird}
+          animating={this.state.animating}
         />
 
         <GridMap
@@ -191,7 +205,6 @@ const createNode = (col, row, nRow, nCol) => {
     col,
     row,
     type: nodeType,
-    distance: Infinity,
     toggled: false,
     isWall: false,
     previousNode: null

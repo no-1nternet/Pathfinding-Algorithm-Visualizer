@@ -1,6 +1,6 @@
 {
   "homepage": "http://hyan506.github.io/Pathfinding-Algorithm-Visualizer",
-  "name": "Pathfinding-Algorithm-Visualizer",
+  "name": "pathfinding-algorithm-visualizer",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

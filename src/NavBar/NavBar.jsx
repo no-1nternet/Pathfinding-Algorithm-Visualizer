@@ -10,24 +10,36 @@ const NavBar = props => {
                 <nav>
                     <ul className="nav__links">
                         <li><div
-                            className={`${algoName === "A star" ? "active" : ""}`}
-                            onClick={() => { setAlgoName("A star") }}>A star</div></li>
+                            className={`${algoName === "astar" ? "active" : ""}`}
+                            onClick={() => { setAlgoName("astar") }}>A star</div></li>
                         <li><div
                             className={`${algoName === "dijkstra" ? "active" : ""}`}
-                            onClick={() => { setAlgoName("dijkstra") }}>Dijkstra</div></li>
+                            onClick={() => {
+                                setAlgoName("dijkstra");
+                                props.clear();
+                            }}>Dijkstra</div></li>
                     </ul>
                 </nav>
                 <div>
-                    <button onClick={() => { props.clear() }}>Clear</button>
+                    <button onClick={() => { props.clear() }}
+                        disabled={props.animating === true}
+                        className="clearButton"
+                    >Clear Path</button>
+                    <button onClick={() => { props.clearWalls() }}
+                        disabled={props.animating === true}
+                        className="clearButton"
+                    >Clear Walls</button>
                     <button
-                        disabled={algoName === "none"}
-                        onClick={() => { props.exe(algoName) }}>
-                        {algoName === "none" ? "Please select algorithon" : `Go ${algoName}!`}
+                        disabled={algoName === "none" || props.animating === true}
+                        onClick={() => { props.exe(algoName) }}
+                        className="startButton">
+                        {algoName === "none" ? "Please select algorithon" :
+                            props.animating ? "Animating" : `Go ${algoName}!`}
                     </button>
                 </div>
             </div>
 
-        </React.Fragment>
+        </React.Fragment >
 
     );
 }
